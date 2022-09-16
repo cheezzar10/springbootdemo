@@ -1,6 +1,10 @@
 package edu.cheezzario.interview.coding.springbootdemo.ordering.web.api;
 
 import edu.cheezzario.interview.coding.springbootdemo.ordering.data.repo.OrderRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +30,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path="/ordering", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Order Management Controller", description = "Provides order management operations")
 public class OrderingController {
     private static final Logger log = LoggerFactory.getLogger(OrderingController.class);
 
@@ -38,6 +44,11 @@ public class OrderingController {
 
     @PostMapping(path = "/instant-checkout", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Instant order checkout, user is not required to be signed-up")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Instant checkout request processed successfully"),
+            @ApiResponse(responseCode = "400", description = "Instant checkout request input data validation failed")
+    })
     public ResponseEntity<CheckoutResult> instantCheckout(@Valid @RequestBody Order order, BindingResult validation) {
         log.info("processing instant checkout request: {}", order);
 
@@ -66,6 +77,8 @@ public class OrderingController {
 
     @PreAuthorize("hasRole('STAFF')")
     @GetMapping("/orders")
+    @ResponseStatus(code = HttpStatus.OK)
+    @Operation(summary = "Listing all existing orders")
     public List<Order> orders() {
         log.info("retrieving all orders");
 
@@ -77,6 +90,11 @@ public class OrderingController {
 
     @PreAuthorize("hasRole('STAFF')")
     @GetMapping("/order/{id}")
+    @Operation(summary = "Loading order by order id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order loaded"),
+            @ApiResponse(responseCode = "404", description = "Order with specified order id is not found")
+    })
     public ResponseEntity<Order> order(@PathVariable("id") Long id) {
         log.info("retrieving order with id: {}", id);
 
