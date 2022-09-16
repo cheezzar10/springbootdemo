@@ -28,10 +28,13 @@ public class OrderingControllerAuthTest {
         newOrder.setCustomerAddress("Treasure Island");
         newOrder.setProductSku("PPP-333");
 
-        ResponseEntity<Order> instantCheckoutResponse = client.postForEntity("/ordering/instant-checkout", newOrder, Order.class);
+        ResponseEntity<CheckoutResult> instantCheckoutResponse = client.postForEntity(
+                "/ordering/instant-checkout",
+                newOrder,
+                CheckoutResult.class);
         Assertions.assertEquals(HttpStatus.OK, instantCheckoutResponse.getStatusCode());
 
-        Order placedOrder = instantCheckoutResponse.getBody();
+        Order placedOrder = instantCheckoutResponse.getBody().getPlacedOrder();
         Assertions.assertTrue(placedOrder.getOrderId() != 0);
 
         ResponseEntity<Order[]> getOrdersResponse = client.getForEntity("/ordering/orders", Order[].class);

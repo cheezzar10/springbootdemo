@@ -1,78 +1,31 @@
 package edu.cheezzario.interview.coding.springbootdemo.ordering.web.api;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
     private long orderId;
 
+    @NotNull(message = "Customer name field is mandatory")
     private String customerName;
 
+    @NotNull(message = "Customer email field has invalid value")
     private String customerPhone;
 
+    @NotNull
+    @Email(message = "Customer email field has invalid value")
     private String customerEmail;
 
+    @NotNull
     private String customerAddress;
 
+    @NotNull
     private String productSku;
-
-    public Order() {
-
-    }
-
-    public Order(long orderId, String customerName, String customerPhone, String customerEmail, String customerAddress, String productSku) {
-        this.orderId = orderId;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.customerEmail = customerEmail;
-        this.customerAddress = customerAddress;
-        this.productSku = productSku;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getCustomerPhone() {
-        return customerPhone;
-    }
-
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
-    }
-
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
-
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
-
-    public String getCustomerAddress() {
-        return customerAddress;
-    }
-
-    public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress;
-    }
-
-    public String getProductSku() {
-        return productSku;
-    }
-
-    public void setProductSku(String productSku) {
-        this.productSku = productSku;
-    }
-
-
 }

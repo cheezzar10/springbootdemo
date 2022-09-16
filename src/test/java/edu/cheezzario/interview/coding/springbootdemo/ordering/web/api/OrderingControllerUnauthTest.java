@@ -9,49 +9,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureWebTestClient
-//@AutoConfigureMockMvc
 public class OrderingControllerUnauthTest {
-//    private MockMvc mockMvc;
-
-//    @Autowired
-//    private WebTestClient client;
-
     @Autowired
-    // .withBasicAuth()
     private TestRestTemplate client;
 
-    /*
     @Test
-    public void testInstantCheckout() throws Exception {
-        mockMvc.perform(
-                post("/ordering/instant-checkout")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-     */
-
-   /*
-    @Test
-    public void testInstantCheckout() throws Exception {
-        Order order = new Order();
-        order.setCustomerName("Billy Bones");
-
-        client
-                .post()
-                .uri("/ordering/instant-checkout")
-                .bodyValue(order)
-                .exchange()
-                .expectStatus()
-                .isOk();
-
-    }
-    */
-
-    @Test
-    public void testFindAllOrders() throws Exception {
+    public void testFindAllOrdersAccessDenied() throws Exception {
         ResponseEntity<String> response = client.getForEntity("/ordering/orders", String.class);
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
+    @Test
+    public void testInvalidInstantCheckoutDataRejection() {
+        Order newOrder = new Order();
+        newOrder.setCustomerPhone("222");
+        newOrder.setCustomerEmail("foo");
+        newOrder.setCustomerAddress("Treasure Island");
+        newOrder.setProductSku("PPP-333");
+
+        ResponseEntity<CheckoutResult> instantCheckoutResponse = client.postForEntity(
+                "/ordering/instant-checkout",
+                newOrder,
+                CheckoutResult.class);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, instantCheckoutResponse.getStatusCode());
+
+        String errorMessage = instantCheckoutResponse.getBody().getErrorMessage();
+        Assertions.assertTrue(errorMessage.contains("Field error in object 'order' on field 'customerEmail'"));
     }
 }
