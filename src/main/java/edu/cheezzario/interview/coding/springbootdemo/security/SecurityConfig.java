@@ -25,6 +25,9 @@ import java.util.List;
 public class SecurityConfig {
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
+    public static final String TEST_USER_NAME = "billy";
+    public static final String TEST_USER_PASSWORD = "password";
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         log.info("configuring password encoder");
@@ -38,8 +41,8 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(List.of(
                 new User(
-                        "billy",
-                        passwordEncoder.encode("password"),
+                        TEST_USER_NAME,
+                        passwordEncoder.encode(TEST_USER_PASSWORD),
                         List.of(new SimpleGrantedAuthority("ROLE_STAFF")))));
     }
 
